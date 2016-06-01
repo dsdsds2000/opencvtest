@@ -38,6 +38,7 @@ public:
 	cv::Mat matGlobal2;
 	cv::Mat matGlobal3;
 	cv::Mat matGlobal4;
+	cv::Mat matGlobal5;
 	IplImage *p_img[8];	
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();

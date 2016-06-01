@@ -39,6 +39,9 @@
     <ClInclude Include="DS_opencv.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\lsd_1.6\lsd.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="opencvtest.cpp">
@@ -51,6 +54,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CvvImage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lsd_1.6\lsd.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

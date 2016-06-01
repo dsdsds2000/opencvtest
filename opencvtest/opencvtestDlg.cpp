@@ -254,6 +254,7 @@ void CopencvtestDlg::OnBnClickedButtonProc()
 	ChangeHSV(p_img[4], 2);
 	cvCvtColor(p_img[4], p_img[5], CV_HSV2BGR);
 	matGlobal3 = cv::Mat(p_img[5]);//存入全局变量供后级处理
+	
 
 	pDC = GetDlgItem(IDC_RESULT3)->GetDC();
 	hDC = pDC->GetSafeHdc();
@@ -429,7 +430,10 @@ void CopencvtestDlg::OnBnClickedButtonFilter()
 		
 	//IplImage *p_img4 = cvCreateImage(cvGetSize(&img), img.depth, 1);//单通道
 	//cvCvtColor(p_img3, p_img4, CV_BGR2GRAY);
-	cvSmooth(p_img[3], p_img[1], CV_MEDIAN);
+	cvSmooth(p_img[5], p_img[1], CV_MEDIAN);
+	matGlobal5 = cv::Mat(p_img[1]);//存入全局变量供后级处理
+	cv::imwrite("..\\testimg.jpg", matGlobal5);
+
 	CDC* pDC = GetDlgItem(IDC_RESULT2)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CvvImage cimg;

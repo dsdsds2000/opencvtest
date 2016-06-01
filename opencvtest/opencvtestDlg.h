@@ -6,6 +6,8 @@
 
 #include "cv.h"
 #include "afxwin.h"
+//#include <string>
+
 
 // CopencvtestDlg 对话框
 class CopencvtestDlg : public CDialogEx
@@ -34,12 +36,13 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
+	std::string sFilePath;//原始路径
 	cv::Mat matGlobal1;//原始数据
 	cv::Mat matGlobal2;
 	cv::Mat matGlobal3;
 	cv::Mat matGlobal4;
 	cv::Mat matGlobal5;
-	IplImage *p_img[8];	
+	IplImage *p_img[8];
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
 	void ChangeHSV(IplImage* img, int method);
@@ -54,4 +57,16 @@ public:
 	CString m_edit_V_high2;
 	CString m_edit_S_low2;
 	CString m_edit_S_high2;
+	CString m_edit_H_low2;
+	CString m_edit_H_high2;
+	afx_msg void OnBnClickedButtonProc2();
+	afx_msg void OnStnDblclickRender();
+//	afx_msg void OnStnClickedResult();
+	afx_msg void OnStnDblclickResult2();
+	afx_msg void OnStnDblclickResult();
+	afx_msg void OnStnDblclickResult3();
+	afx_msg void OnStnDblclickResult4();
+	afx_msg void OnBnClickedButtonProc3();
+	CString m_edit_filter_order;
+	CString m_edit_filter_times;
 };

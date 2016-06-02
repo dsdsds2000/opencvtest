@@ -43,6 +43,7 @@ public:
 	cv::Mat matGlobal4;
 	cv::Mat matGlobal5;
 	IplImage *p_img[8];
+	IplImage *p_imgs[1];//µ¥Í¨µÀ
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
 	void ChangeHSV(IplImage* img, int method);

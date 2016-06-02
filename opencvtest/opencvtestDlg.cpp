@@ -153,8 +153,8 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_S_high2.Format("%d", 255);
 	m_edit_V_low2.Format("%d", 1);
 	m_edit_V_high2.Format("%d", 150);
-	m_edit_H_low.Format("%d", 7);
-	m_edit_H_high.Format("%d", 12);
+	m_edit_H_low2.Format("%d", 7);
+	m_edit_H_high2.Format("%d", 12);
 	m_edit_filter_order.Format("%d", 15);
 	m_edit_filter_times.Format("%d", 2);
 	UpdateData(0);
@@ -237,13 +237,13 @@ void CopencvtestDlg::OnPaint()
 				cimg.DrawToHDC(hDC, &rect);
 				ReleaseDC(pDC);
 			}
-		if (p_img[7])
-			if (p_img[7]->width > 0)
+		if (p_imgs[0])
+			if (p_imgs[0]->width > 0)
 			{
 				CDC* pDC = GetDlgItem(IDC_RESULT4)->GetDC();
 				HDC hDC = pDC->GetSafeHdc();
 				CvvImage cimg;
-				cimg.CopyOf(p_img[7]);
+				cimg.CopyOf(p_imgs[0]);
 				CRect rect;
 				GetDlgItem(IDC_RESULT4)->GetClientRect(&rect);
 				cimg.DrawToHDC(hDC, &rect);
@@ -310,8 +310,7 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 
 void CopencvtestDlg::OnBnClickedButtonProc()
 {
-	// TODO: 在此添加控件通知处理程序代码	
-	//IplImage img = matGlobal1;//浅拷贝
+	// TODO: 在此添加控件通知处理程序代码		
 
 	cvCvtColor(p_img[0], p_img[2], CV_BGR2HSV);
 	ChangeHSV(p_img[2], 1);
@@ -347,26 +346,43 @@ void CopencvtestDlg::OnBnClickedButtonProc()
 	cvCvtColor(p_img[3], p_img[6], CV_BGR2HSV);
 	ChangeHSV(p_img[6], 3);
 	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
-	matGlobal4 = cv::Mat(p_img[7]);//存入全局变量供后级处理
+
+	for (int i = 0; i < 2; i++)
+	{
+		cvSmooth(p_img[7], p_img[1], CV_MEDIAN, 15);
+		cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
+		cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	}
+
+	cvCvtColor(p_img[7], p_img[6], CV_BGR2HSV);
+	ChangeHSV(p_img[6], 4);
+	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+
+	for (int i = 0; i < 2; i++)
+	{
+		cvSmooth(p_img[7], p_img[1], CV_MEDIAN, 15);
+		cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
+		cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	}
+
+	cvCvtColor(p_img[7], p_img[6], CV_BGR2HSV);
+	ChangeHSV(p_img[6], 5);
+	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+
+	IplImage img = matGlobal1;//浅拷贝
+	if (p_imgs[0])//手动释放上一次的
+		cvReleaseImage(&p_imgs[0]);
+	p_imgs[0] = cvCreateImage(cvGetSize(&img), img.depth, 1);//单通道
+	cvCvtColor(p_img[7], p_imgs[0], CV_BGR2GRAY);
+	matGlobal4 = cv::Mat(p_imgs[0]);//存入全局变量供后级处理
 	cv::imwrite("..\\matGlobal4.jpg", matGlobal4);
 
 	pDC = GetDlgItem(IDC_RESULT4)->GetDC();
 	hDC = pDC->GetSafeHdc();
-	cimg.CopyOf(p_img[7]);
+	cimg.CopyOf(p_imgs[0]);
 	GetDlgItem(IDC_RESULT4)->GetClientRect(&rect);
 	cimg.DrawToHDC(hDC, &rect);
 	ReleaseDC(pDC);
-
-
-	//IplImage *p_img4 = cvCreateImage(cvGetSize(&img), img.depth, 1);//单通道
-	//cvCvtColor(p_img3, p_img4, CV_BGR2GRAY);
-	//pDC = GetDlgItem(IDC_RESULT2)->GetDC();
-	//hDC = pDC->GetSafeHdc();
-	//cimg.CopyOf(p_img4);
-	//GetDlgItem(IDC_RESULT)->GetClientRect(&rect);
-	//cimg.DrawToHDC(hDC, &rect);
-
-	//ReleaseDC(pDC);
 }
 
 
@@ -546,7 +562,7 @@ void CopencvtestDlg::ChangeHSV(IplImage* img, int method)
 				//ptr[3 * x + 2] = 255;//V
 				if (ptr[3 * x] > 0)
 				{
-					ptr[3 * x + 1] = 255;//S
+					ptr[3 * x + 1] = 0;//S
 					ptr[3 * x + 2] = 255;//V
 				}
 			}
@@ -569,7 +585,6 @@ void CopencvtestDlg::OnBnClickedButtonFilter()
 		cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
 		//Sleep(100);
 	}
-
 	matGlobal5 = cv::Mat(p_img[1]);//存入全局变量供后级处理
 	cv::imwrite("..\\matGlobal5.jpg", matGlobal5);
 

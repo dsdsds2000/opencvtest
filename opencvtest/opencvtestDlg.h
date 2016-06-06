@@ -42,7 +42,8 @@ public:
 	cv::Mat matGlobal3;
 	cv::Mat matGlobal4;
 	cv::Mat matGlobal5;
-	IplImage *p_img[8];
+	cv::Mat matGlobal6;
+	IplImage *p_img[9];
 	IplImage *p_imgs[1];//µ¥Í¨µÀ
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
@@ -70,4 +71,6 @@ public:
 	afx_msg void OnBnClickedButtonProc3();
 	CString m_edit_filter_order;
 	CString m_edit_filter_times;
+	afx_msg void OnBnClickedButtonProc4();
+	afx_msg void OnStnDblclickResult5();
 };

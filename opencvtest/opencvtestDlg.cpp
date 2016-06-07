@@ -10,6 +10,7 @@
 #include "cv.h"
 #include "highgui.h"
 #include "DS_opencv.h"
+#include "lsd.h"
 
 using namespace std;
 using namespace cv;
@@ -689,11 +690,30 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 	// TODO: 在此添加控件通知处理程序代码
 	Point pt1 = Point(0, 0);
 	Point pt2 = Point(110, 110);
-	matGlobal6 = cv::Mat(p_img[8]);//初始化
-	line(matGlobal6, pt1, pt2, (100, 100, 0), 1);
-	cv::imwrite("..\\matGlobal6.jpg", matGlobal6);
 
-	*p_img[8] = IplImage(matGlobal6);
+	if (p_imgs[1])//手动释放上一次的
+		cvReleaseImage(&p_imgs[1]);
+	p_imgs[1] = cvCreateImage(cvGetSize(p_img[5]), p_img[5]->depth, 1);//单通道
+	cvCvtColor(p_img[5], p_imgs[1], CV_BGR2GRAY);
+	Mat tmp(p_imgs[1], true);
+	tmp.convertTo(matGlobal6, CV_64FC1);
+	tmp.convertTo(matGlobal7, CV_64FC1);
+	//matGlobal6 = cv::Mat(p_imgs[1], true);//初始化
+	//matGlobal7 = cv::Mat(p_imgs[1], true);//初始化
+	//line(matGlobal6, pt1, pt2, Scalar(0, 255, 0), 1);
+
+
+	int cols = matGlobal6.cols;
+	int rows = matGlobal6.rows;
+	image_double image_line = new_image_double(cols, rows);
+	double *linedata;
+	int n_line_out;
+	linedata = lsd(&n_line_out, matGlobal6.ptr<double>(0), cols, rows);
+	//*matGlobal7.ptr<double>(0) = *image_line->data;
+
+	*p_img[8] = IplImage(matGlobal7);
+	//matGlobal7 = Mat(p_img[8],true);
+	cv::imwrite("..\\matGlobal7.jpg", matGlobal7);
 	CDC* pDC = GetDlgItem(IDC_RESULT5)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CvvImage cimg;
@@ -708,5 +728,5 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 void CopencvtestDlg::OnStnDblclickResult5()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	ShellExecute(NULL, "open", "..\\matGlobal6.jpg", NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, "open", "..\\matGlobal7.jpg", NULL, NULL, SW_SHOWNORMAL);
 }

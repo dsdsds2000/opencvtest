@@ -43,8 +43,9 @@ public:
 	cv::Mat matGlobal4;
 	cv::Mat matGlobal5;
 	cv::Mat matGlobal6;
+	cv::Mat matGlobal7;
 	IplImage *p_img[9];
-	IplImage *p_imgs[1];//单通道
+	IplImage *p_imgs[2];//单通道
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
 	void ChangeHSV(IplImage* img, int method);

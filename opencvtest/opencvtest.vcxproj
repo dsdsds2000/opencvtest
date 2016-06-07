@@ -193,9 +193,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\lsd_1.6\lsd.h" />
     <ClInclude Include="CvvImage.h" />
     <ClInclude Include="DS_opencv.h" />
+    <ClInclude Include="lsd.h" />
     <ClInclude Include="opencvtest.h" />
     <ClInclude Include="opencvtestDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -203,10 +203,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\lsd_1.6\lsd.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="CvvImage.cpp" />
+    <ClCompile Include="lsd.cpp" />
     <ClCompile Include="opencvtest.cpp" />
     <ClCompile Include="opencvtestDlg.cpp" />
     <ClCompile Include="stdafx.cpp">

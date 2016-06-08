@@ -693,26 +693,34 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 
 	if (p_imgs[1])//手动释放上一次的
 		cvReleaseImage(&p_imgs[1]);
-	p_imgs[1] = cvCreateImage(cvGetSize(p_img[5]), p_img[5]->depth, 1);//单通道
-	cvCvtColor(p_img[5], p_imgs[1], CV_BGR2GRAY);
+	p_imgs[1] = cvCreateImage(cvGetSize(p_img[1]), p_img[1]->depth, 1);//单通道
+	cvCvtColor(p_img[1], p_imgs[1], CV_BGR2GRAY);
 	Mat tmp(p_imgs[1], true);
 	tmp.convertTo(matGlobal6, CV_64FC1);
-	tmp.convertTo(matGlobal7, CV_64FC1);
+	//tmp.convertTo(matGlobal7, CV_64FC1);
 	//matGlobal6 = cv::Mat(p_imgs[1], true);//初始化
-	//matGlobal7 = cv::Mat(p_imgs[1], true);//初始化
+	matGlobal7 = cv::Mat(p_imgs[1], true);//初始化
 	//line(matGlobal6, pt1, pt2, Scalar(0, 255, 0), 1);
-
 
 	int cols = matGlobal6.cols;
 	int rows = matGlobal6.rows;
-	image_double image_line = new_image_double(cols, rows);
-	double *linedata;
-	int n_line_out;
+	double *linedata = 0, line_width = 0;
+	int n_line_out = 0;
 	linedata = lsd(&n_line_out, matGlobal6.ptr<double>(0), cols, rows);
-	//*matGlobal7.ptr<double>(0) = *image_line->data;
+	if (linedata)
+	{
+		for (int i = 0; i < n_line_out; i++)
+		{
+			pt1 = Point(*(linedata + i * 7), *(linedata + i * 7 + 1));
+			pt2 = Point(*(linedata + i * 7 + 2), *(linedata + i * 7 + 3));
+			line_width = *(linedata + i * 7 + 4);
+			line(matGlobal7, pt1, pt2, Scalar(255, 255, 255), line_width);
+		}
+	}
+	free(linedata);
+	linedata = 0;
 
 	*p_img[8] = IplImage(matGlobal7);
-	//matGlobal7 = Mat(p_img[8],true);
 	cv::imwrite("..\\matGlobal7.jpg", matGlobal7);
 	CDC* pDC = GetDlgItem(IDC_RESULT5)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();

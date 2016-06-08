@@ -236,13 +236,13 @@ static double dist(double x1, double y1, double x2, double y2)
 
       ntl->max_size
  */
-//typedef struct ntuple_list_s
-//{
-//  unsigned int size;
-//  unsigned int max_size;
-//  unsigned int dim;
-//  double * values;
-//} * ntuple_list;
+typedef struct ntuple_list_s
+{
+  unsigned int size;
+  unsigned int max_size;
+  unsigned int dim;
+  double * values;
+} * ntuple_list;
 
 /*----------------------------------------------------------------------------*/
 /** Free memory used in n-tuple 'in'.
@@ -467,11 +467,11 @@ static image_int new_image_int_ini( unsigned int xsize, unsigned int ysize,
 
     with x and y integer.
  */
-//typedef struct image_double_s
-//{
-//  double * data;
-//  unsigned int xsize,ysize;
-//} * image_double;
+typedef struct image_double_s
+{
+  double * data;
+  unsigned int xsize,ysize;
+} * image_double;
 
 /*----------------------------------------------------------------------------*/
 /** Free memory used in image_double 'i'.
@@ -487,7 +487,7 @@ static void free_image_double(image_double i)
 /*----------------------------------------------------------------------------*/
 /** Create a new image_double of size 'xsize' times 'ysize'.
  */
-image_double new_image_double(unsigned int xsize, unsigned int ysize)
+static image_double new_image_double(unsigned int xsize, unsigned int ysize)
 {
   image_double image;
 

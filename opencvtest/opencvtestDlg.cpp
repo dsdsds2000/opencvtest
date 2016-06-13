@@ -116,6 +116,7 @@ BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PROC3, &CopencvtestDlg::OnBnClickedButtonProc3)
 	ON_BN_CLICKED(IDC_BUTTON_PROC4, &CopencvtestDlg::OnBnClickedButtonProc4)
 	ON_STN_DBLCLK(IDC_RESULT5, &CopencvtestDlg::OnStnDblclickResult5)
+	ON_BN_CLICKED(IDC_BUTTON_CAPTURE, &CopencvtestDlg::OnBnClickedButtonCapture)
 END_MESSAGE_MAP()
 
 
@@ -306,7 +307,7 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 			MessageBox("camera open failed !", "error", MB_OK);
 			return;
 		}
-		VideoCap >> matGlobal1;
+		//VideoCap >> matGlobal1;
 	}
 	if (!matGlobal1.data)
 	{
@@ -757,4 +758,11 @@ void CopencvtestDlg::OnStnDblclickResult5()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	ShellExecute(NULL, "open", "..\\matGlobal7.jpg", NULL, NULL, SW_SHOWNORMAL);
+}
+
+
+void CopencvtestDlg::OnBnClickedButtonCapture()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	VideoCap >> matGlobal1;
 }

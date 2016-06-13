@@ -78,4 +78,5 @@ public:
 	afx_msg void OnStnDblclickResult5();
 	int m_radio_input;
 	CString m_edit_caminput;
+	afx_msg void OnBnClickedButtonCapture();
 };

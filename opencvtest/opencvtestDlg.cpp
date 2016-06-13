@@ -117,6 +117,8 @@ BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_PROC4, &CopencvtestDlg::OnBnClickedButtonProc4)
 	ON_STN_DBLCLK(IDC_RESULT5, &CopencvtestDlg::OnStnDblclickResult5)
 	ON_BN_CLICKED(IDC_BUTTON_CAPTURE, &CopencvtestDlg::OnBnClickedButtonCapture)
+	ON_BN_CLICKED(IDC_BUTTON_PAUSE, &CopencvtestDlg::OnBnClickedButtonPause)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -300,7 +302,7 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 		matGlobal1 = cv::imread(sFilePath, 1);//原始数据
 	}
 	else if (1 == m_radio_input)
-	{		
+	{
 		VideoCap.open(atoi(m_edit_caminput));
 		if (!VideoCap.isOpened())
 		{
@@ -765,7 +767,20 @@ void CopencvtestDlg::OnStnDblclickResult5()
 void CopencvtestDlg::OnBnClickedButtonCapture()
 {
 	// TODO: 在此添加控件通知处理程序代码
+	if (!VideoCap.isOpened())
+	{
+		VideoCap.open(atoi(m_edit_caminput));
+	}
+	SetTimer(0, 100, NULL);
+}
+
+
+void CopencvtestDlg::OnBnClickedButtonPause()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	KillTimer(0);
 	VideoCap >> matGlobal1;
+	VideoCap.release();
 	cv::imwrite("..\\matGlobal1.jpg", matGlobal1);
 	IplImage img = matGlobal1;
 	CDC* pDC = GetDlgItem(IDC_RENDER)->GetDC();
@@ -782,4 +797,35 @@ void CopencvtestDlg::OnBnClickedButtonCapture()
 			cvReleaseImage(&p_img[i]);
 		p_img[i] = cvCloneImage(&img);//深拷贝
 	}
+}
+
+
+void CopencvtestDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	switch (nIDEvent)
+	{
+	case 0:
+	{
+		VideoCap >> matGlobal1;
+		IplImage img = matGlobal1;
+		CDC* pDC = GetDlgItem(IDC_RENDER)->GetDC();
+		HDC hDC = pDC->GetSafeHdc();
+		CvvImage cimg;
+		cimg.CopyOf(&img);
+		CRect rect;
+		GetDlgItem(IDC_RENDER)->GetClientRect(&rect);
+		cimg.DrawToHDC(hDC, &rect);
+		ReleaseDC(pDC);
+
+		break;
+	}
+	default:
+	{
+		MessageBox("enter timer default");
+		break;
+	}
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
 }

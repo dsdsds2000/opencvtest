@@ -79,4 +79,6 @@ public:
 	int m_radio_input;
 	CString m_edit_caminput;
 	afx_msg void OnBnClickedButtonCapture();
+	afx_msg void OnBnClickedButtonPause();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

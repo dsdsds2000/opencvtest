@@ -6,6 +6,7 @@
 
 #include "cv.h"
 #include "afxwin.h"
+#include "highgui.hpp"
 //#include <string>
 
 
@@ -46,6 +47,7 @@ public:
 	cv::Mat matGlobal7;
 	IplImage *p_img[9];
 	IplImage *p_imgs[2];//µ¥Í¨µÀ
+	cv::VideoCapture VideoCap;
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
 	void ChangeHSV(IplImage* img, int method);
@@ -64,7 +66,7 @@ public:
 	CString m_edit_H_high2;
 	afx_msg void OnBnClickedButtonProc2();
 	afx_msg void OnStnDblclickRender();
-//	afx_msg void OnStnClickedResult();
+	//	afx_msg void OnStnClickedResult();
 	afx_msg void OnStnDblclickResult2();
 	afx_msg void OnStnDblclickResult();
 	afx_msg void OnStnDblclickResult3();

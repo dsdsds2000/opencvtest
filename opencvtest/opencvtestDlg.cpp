@@ -299,8 +299,7 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 		matGlobal1 = cv::imread(sFilePath, 1);//原始数据
 	}
 	else if (1 == m_radio_input)
-	{
-		VideoCapture VideoCap;
+	{		
 		VideoCap.open(atoi(m_edit_caminput));
 		if (!VideoCap.isOpened())
 		{

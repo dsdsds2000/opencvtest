@@ -307,13 +307,14 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 			MessageBox("camera open failed !", "error", MB_OK);
 			return;
 		}
-		//VideoCap >> matGlobal1;
+		VideoCap >> matGlobal1;
 	}
 	if (!matGlobal1.data)
 	{
 		MessageBox("no image loaded !", "error", MB_OK);
 		return;
 	}
+	cv::imwrite("..\\matGlobal1.jpg", matGlobal1);
 	IplImage img = matGlobal1;
 	CDC* pDC = GetDlgItem(IDC_RENDER)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
@@ -648,7 +649,7 @@ void CopencvtestDlg::OnBnClickedButtonProc2()
 void CopencvtestDlg::OnStnDblclickRender()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	ShellExecute(NULL, "open", sFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	ShellExecute(NULL, "open", "..\\matGlobal1.jpg", NULL, NULL, SW_SHOWNORMAL);
 }
 
 
@@ -765,4 +766,20 @@ void CopencvtestDlg::OnBnClickedButtonCapture()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	VideoCap >> matGlobal1;
+	cv::imwrite("..\\matGlobal1.jpg", matGlobal1);
+	IplImage img = matGlobal1;
+	CDC* pDC = GetDlgItem(IDC_RENDER)->GetDC();
+	HDC hDC = pDC->GetSafeHdc();
+	CvvImage cimg;
+	cimg.CopyOf(&img);
+	CRect rect;
+	GetDlgItem(IDC_RENDER)->GetClientRect(&rect);
+	cimg.DrawToHDC(hDC, &rect);
+	ReleaseDC(pDC);
+	for (int i = 0; i < 9; i++)
+	{
+		if (p_img[i])
+			cvReleaseImage(&p_img[i]);
+		p_img[i] = cvCloneImage(&img);//深拷贝
+	}
 }

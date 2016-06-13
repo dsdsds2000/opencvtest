@@ -74,4 +74,6 @@ public:
 	CString m_edit_filter_times;
 	afx_msg void OnBnClickedButtonProc4();
 	afx_msg void OnStnDblclickResult5();
+	int m_radio_input;
+	CString m_edit_caminput;
 };

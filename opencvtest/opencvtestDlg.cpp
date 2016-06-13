@@ -72,6 +72,8 @@ CopencvtestDlg::CopencvtestDlg(CWnd* pParent /*=NULL*/)
 	, m_edit_H_high2(_T(""))
 	, m_edit_filter_order(_T(""))
 	, m_edit_filter_times(_T(""))
+	, m_radio_input(0)
+	, m_edit_caminput(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -93,6 +95,8 @@ void CopencvtestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_H_HIGH2, m_edit_H_high2);
 	DDX_Text(pDX, IDC_EDIT_FILTER_ORDER, m_edit_filter_order);
 	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES, m_edit_filter_times);
+	DDX_Radio(pDX, IDC_RADIO_FILE, m_radio_input);
+	DDX_Text(pDX, IDC_EDIT_CAMINPUT, m_edit_caminput);
 }
 
 BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
@@ -161,6 +165,7 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_H_high2.Format("%d", 12);
 	m_edit_filter_order.Format("%d", 5);
 	m_edit_filter_times.Format("%d", 2);
+	m_edit_caminput.Format("%d", 0);
 	UpdateData(0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
@@ -280,17 +285,33 @@ HCURSOR CopencvtestDlg::OnQueryDragIcon()
 
 void CopencvtestDlg::OnBnClickedButtonLoad()
 {
-	// TODO: 在此添加控件通知处理程序代码		
-	CString tFileName;
-	CFileDialog tDlg(TRUE);
-	if (tDlg.DoModal() == IDOK) {
-		tFileName = tDlg.GetPathName();
-		sFilePath = tFileName.GetBuffer(0);
-	}
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData();
+	if (0 == m_radio_input)
+	{
+		CString tFileName;
+		CFileDialog tDlg(TRUE);
+		if (tDlg.DoModal() == IDOK) {
+			tFileName = tDlg.GetPathName();
+			sFilePath = tFileName.GetBuffer(0);
+		}
 
-	matGlobal1 = cv::imread(sFilePath, 1);//原始数据
-	if (!matGlobal1.data) {
-		MessageBox("error", "no image loaded!", MB_OK);
+		matGlobal1 = cv::imread(sFilePath, 1);//原始数据
+	}
+	else if (1 == m_radio_input)
+	{
+		VideoCapture VideoCap;
+		VideoCap.open(atoi(m_edit_caminput));
+		if (!VideoCap.isOpened())
+		{
+			MessageBox("camera open failed !", "error", MB_OK);
+			return;
+		}
+		VideoCap >> matGlobal1;
+	}
+	if (!matGlobal1.data)
+	{
+		MessageBox("no image loaded !", "error", MB_OK);
 		return;
 	}
 	IplImage img = matGlobal1;

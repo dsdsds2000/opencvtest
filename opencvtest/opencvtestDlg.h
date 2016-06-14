@@ -81,4 +81,6 @@ public:
 	afx_msg void OnBnClickedButtonCapture();
 	afx_msg void OnBnClickedButtonPause();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	CString m_edit_filter_order2;
+	CString m_edit_filter_times2;
 };

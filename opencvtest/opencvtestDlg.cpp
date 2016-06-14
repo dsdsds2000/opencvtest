@@ -74,6 +74,8 @@ CopencvtestDlg::CopencvtestDlg(CWnd* pParent /*=NULL*/)
 	, m_edit_filter_times(_T(""))
 	, m_radio_input(0)
 	, m_edit_caminput(_T(""))
+	, m_edit_filter_order2(_T(""))
+	, m_edit_filter_times2(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -97,6 +99,8 @@ void CopencvtestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES, m_edit_filter_times);
 	DDX_Radio(pDX, IDC_RADIO_FILE, m_radio_input);
 	DDX_Text(pDX, IDC_EDIT_CAMINPUT, m_edit_caminput);
+	DDX_Text(pDX, IDC_EDIT_FILTER_ORDER2, m_edit_filter_order2);
+	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES2, m_edit_filter_times2);
 }
 
 BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
@@ -168,6 +172,8 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_H_high2.Format("%d", 12);
 	m_edit_filter_order.Format("%d", 5);
 	m_edit_filter_times.Format("%d", 2);
+	m_edit_filter_order2.Format("%d", 15);
+	m_edit_filter_times2.Format("%d", 2);
 	m_edit_caminput.Format("%d", 0);
 	UpdateData(0);
 
@@ -310,6 +316,7 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 			return;
 		}
 		VideoCap >> matGlobal1;
+		VideoCap.release();
 	}
 	if (!matGlobal1.data)
 	{
@@ -371,27 +378,22 @@ void CopencvtestDlg::OnBnClickedButtonProc()
 	ReleaseDC(pDC);
 
 
-	//cvCvtColor(p_img[3], p_img[6], CV_BGR2HSV);
-	//ChangeHSV(p_img[6], 3);
-	//cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	cvCvtColor(p_img[3], p_img[6], CV_BGR2HSV);
+	ChangeHSV(p_img[6], 3);
+	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
 
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	cvSmooth(p_img[7], p_img[1], CV_MEDIAN, 15);
-	//	cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
-	//	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
-	//}
+	pDC = GetDlgItem(IDC_RESULT4)->GetDC();
+	hDC = pDC->GetSafeHdc();
+	cimg.CopyOf(p_img[7]);
+	GetDlgItem(IDC_RESULT4)->GetClientRect(&rect);
+	cimg.DrawToHDC(hDC, &rect);
+	ReleaseDC(pDC);
 
-	//cvCvtColor(p_img[7], p_img[6], CV_BGR2HSV);
-	//ChangeHSV(p_img[6], 4);
-	//cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
 
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	cvSmooth(p_img[7], p_img[1], CV_MEDIAN, 15);
-	//	cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
-	//	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
-	//}
+
+
+
+
 
 	//cvCvtColor(p_img[7], p_img[6], CV_BGR2HSV);
 	//ChangeHSV(p_img[6], 5);
@@ -405,12 +407,26 @@ void CopencvtestDlg::OnBnClickedButtonProc()
 	//matGlobal4 = cv::Mat(p_imgs[0]);//存入全局变量供后级处理
 	//cv::imwrite("..\\matGlobal4.jpg", matGlobal4);
 
-	//pDC = GetDlgItem(IDC_RESULT4)->GetDC();
-	//hDC = pDC->GetSafeHdc();
-	//cimg.CopyOf(p_imgs[0]);
-	//GetDlgItem(IDC_RESULT4)->GetClientRect(&rect);
-	//cimg.DrawToHDC(hDC, &rect);
-	//ReleaseDC(pDC);
+
+
+	//for (int i = 0; i < 2; i++)
+	//{
+	//	cvSmooth(p_img[5], p_img[1], CV_MEDIAN, 5);
+	//	cvCvtColor(p_img[1], p_img[4], CV_BGR2HSV);
+	//	cvCvtColor(p_img[4], p_img[5], CV_HSV2BGR);		
+	//}
+	//matGlobal5 = cv::Mat(p_img[1]);//存入全局变量供后级处理
+	//cv::imwrite("..\\matGlobal5.jpg", matGlobal5);
+
+	/*CDC* pDC = GetDlgItem(IDC_RESULT2)->GetDC();
+	HDC hDC = pDC->GetSafeHdc();
+	CvvImage cimg;
+	cimg.CopyOf(p_img[1]);
+	CRect rect;
+	GetDlgItem(IDC_RESULT2)->GetClientRect(&rect);
+	cimg.DrawToHDC(hDC, &rect);
+	ReleaseDC(pDC);*/
+
 }
 
 
@@ -609,21 +625,37 @@ void CopencvtestDlg::OnBnClickedButtonFilter()
 	for (int i = 0; i < atoi(m_edit_filter_times); i++)
 	{
 		cvSmooth(p_img[5], p_img[1], CV_MEDIAN, atoi(m_edit_filter_order));
-		//cvCvtColor(p_img[1], p_img[4], CV_BGR2HSV);
-		//cvCvtColor(p_img[4], p_img[5], CV_HSV2BGR);
+		cvCvtColor(p_img[1], p_img[4], CV_BGR2HSV);
+		cvCvtColor(p_img[4], p_img[5], CV_HSV2BGR);
 		//Sleep(100);
 	}
-	matGlobal5 = cv::Mat(p_img[1]);//存入全局变量供后级处理
+	matGlobal5 = cv::Mat(p_img[5]);//存入全局变量供后级处理
 	cv::imwrite("..\\matGlobal5.jpg", matGlobal5);
 
 	CDC* pDC = GetDlgItem(IDC_RESULT2)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CvvImage cimg;
-	cimg.CopyOf(p_img[1]);
+	cimg.CopyOf(p_img[5]);
 	CRect rect;
 	GetDlgItem(IDC_RESULT2)->GetClientRect(&rect);
 	cimg.DrawToHDC(hDC, &rect);
 	ReleaseDC(pDC);
+
+	for (int i = 0; i < atoi(m_edit_filter_times2); i++)
+	{
+		cvSmooth(p_img[7], p_img[1], CV_MEDIAN, atoi(m_edit_filter_order2));
+		cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
+		cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	}
+	//cvCvtColor(p_img[7], p_img[6], CV_BGR2HSV);
+	ChangeHSV(p_img[6], 4);
+	cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	for (int i = 0; i < atoi(m_edit_filter_times2); i++)
+	{
+		cvSmooth(p_img[7], p_img[1], CV_MEDIAN, atoi(m_edit_filter_order2));
+		cvCvtColor(p_img[1], p_img[6], CV_BGR2HSV);
+		cvCvtColor(p_img[6], p_img[7], CV_HSV2BGR);
+	}
 }
 
 
@@ -771,7 +803,12 @@ void CopencvtestDlg::OnBnClickedButtonCapture()
 	{
 		VideoCap.open(atoi(m_edit_caminput));
 	}
-	SetTimer(0, 100, NULL);
+	if (!VideoCap.isOpened())
+	{
+		MessageBox("camera open failed !", "error", MB_OK);
+		return;
+	}
+	SetTimer(0, 20, NULL);
 }
 
 

@@ -45,7 +45,8 @@ public:
 	cv::Mat matGlobal5;
 	cv::Mat matGlobal6;
 	cv::Mat matGlobal7;
-	IplImage *p_img[9];
+	cv::Mat matGlobal8;
+	IplImage *p_img[10];
 	IplImage *p_imgs[2];//µ¥Í¨µÀ
 	cv::VideoCapture VideoCap;
 	afx_msg void OnBnClickedButtonLoad();
@@ -83,4 +84,6 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CString m_edit_filter_order2;
 	CString m_edit_filter_times2;
+	afx_msg void OnStnDblclickResult6();
+	afx_msg void OnStnDblclickResult7();
 };

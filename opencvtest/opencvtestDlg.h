@@ -48,6 +48,8 @@ public:
 	cv::Mat matGlobal8;
 	IplImage *p_img[10];
 	IplImage *p_imgs[2];//单通道
+	double *linedata[2] = { 0 ,0 }, line_width[2] = { 0 ,0 };//直线结果
+	int n_line_out[2] = { 0 ,0 };
 	cv::VideoCapture VideoCap;
 	afx_msg void OnBnClickedButtonLoad();
 	afx_msg void OnBnClickedButtonProc();
@@ -86,4 +88,6 @@ public:
 	CString m_edit_filter_times2;
 	afx_msg void OnStnDblclickResult6();
 	afx_msg void OnStnDblclickResult7();
+	CString m_edit_filter_order3;
+	CString m_edit_filter_times3;
 };

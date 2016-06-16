@@ -76,6 +76,8 @@ CopencvtestDlg::CopencvtestDlg(CWnd* pParent /*=NULL*/)
 	, m_edit_caminput(_T(""))
 	, m_edit_filter_order2(_T(""))
 	, m_edit_filter_times2(_T(""))
+	, m_edit_filter_order3(_T(""))
+	, m_edit_filter_times3(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -101,6 +103,8 @@ void CopencvtestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_CAMINPUT, m_edit_caminput);
 	DDX_Text(pDX, IDC_EDIT_FILTER_ORDER2, m_edit_filter_order2);
 	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES2, m_edit_filter_times2);
+	DDX_Text(pDX, IDC_EDIT_FILTER_ORDER3, m_edit_filter_order3);
+	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES3, m_edit_filter_times3);
 }
 
 BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
@@ -176,6 +180,8 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_filter_times.Format("%d", 7);
 	m_edit_filter_order2.Format("%d", 3);
 	m_edit_filter_times2.Format("%d", 7);
+	m_edit_filter_order3.Format("%d", 3);
+	m_edit_filter_times3.Format("%d", 0);
 	m_edit_caminput.Format("%d", 0);
 	UpdateData(0);
 
@@ -359,7 +365,15 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 
 void CopencvtestDlg::OnBnClickedButtonProc()
 {
-	// TODO: 在此添加控件通知处理程序代码		
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData();
+	for (int i = 0; i < atoi(m_edit_filter_times3); i++)
+	{
+		cvSmooth(p_img[0], p_img[1], CV_MEDIAN, atoi(m_edit_filter_order3));
+		cvCvtColor(p_img[1], p_img[2], CV_BGR2HSV);
+		cvCvtColor(p_img[2], p_img[0], CV_HSV2BGR);
+		//Sleep(100);
+	}
 
 	cvCvtColor(p_img[0], p_img[2], CV_BGR2HSV);
 	ChangeHSV(p_img[2], 1);
@@ -786,22 +800,23 @@ void CopencvtestDlg::OnBnClickedButtonProc3()
 	//line(matGlobal7, pt1, pt2, Scalar(0, 255, 0), 1);
 	int cols = matGlobal7.cols;
 	int rows = matGlobal7.rows;
-	double *linedata = 0, line_width = 0;
-	int n_line_out = 0;
-	linedata = lsd(&n_line_out, matGlobal7.ptr<double>(0), cols, rows);
-	if (linedata)
+	
+	linedata[0] = lsd(&n_line_out[0], matGlobal7.ptr<double>(0), cols, rows);
+	//matGlobal7.convertTo(matGlobal7, CV_8UC3);
+	matGlobal7 = cv::Mat(p_img[5], 1);
+	if (linedata[0])
 	{
-		for (int i = 0; i < n_line_out; i++)
+		for (int i = 0; i < n_line_out[0]; i++)
 		{
-			pt1 = Point(*(linedata + i * 7), *(linedata + i * 7 + 1));
-			pt2 = Point(*(linedata + i * 7 + 2), *(linedata + i * 7 + 3));
-			line_width = *(linedata + i * 7 + 4);
-			line(matGlobal7, pt1, pt2, Scalar(255, 0, 0), line_width);
+			pt1 = Point(*(linedata[0] + i * 7), *(linedata[0] + i * 7 + 1));
+			pt2 = Point(*(linedata[0] + i * 7 + 2), *(linedata[0] + i * 7 + 3));
+			line_width[0] = *(linedata[0] + i * 7 + 4);
+			line(matGlobal7, pt1, pt2, Scalar(0, 255, 0), 1);// line_width);
 		}
 	}
-	free(linedata);
-	linedata = 0;
-
+	//free(linedata[0]);
+	//linedata[0] = 0;
+	
 	*p_img[8] = IplImage(matGlobal7);
 	cv::imwrite("..\\matGlobal7.jpg", matGlobal7);
 	CDC* pDC = GetDlgItem(IDC_RESULT6)->GetDC();
@@ -822,22 +837,24 @@ void CopencvtestDlg::OnBnClickedButtonProc3()
 	tmp.convertTo(matGlobal8, CV_64FC1);
 	cols = matGlobal8.cols;
 	rows = matGlobal8.rows;
-	line_width = 0;
-	n_line_out = 0;
-	linedata = lsd(&n_line_out, matGlobal8.ptr<double>(0), cols, rows);
-	if (linedata)
+	//line_width = 0;
+	//n_line_out = 0;
+	linedata[1] = lsd(&n_line_out[1], matGlobal8.ptr<double>(0), cols, rows);
+	matGlobal8 = cv::Mat(p_img[7], 1);
+	if (linedata[1])
 	{
-		for (int i = 0; i < n_line_out; i++)
+		for (int i = 0; i < n_line_out[1]; i++)
 		{
-			pt1 = Point(*(linedata + i * 7), *(linedata + i * 7 + 1));
-			pt2 = Point(*(linedata + i * 7 + 2), *(linedata + i * 7 + 3));
-			line_width = *(linedata + i * 7 + 4);
-			line(matGlobal8, pt1, pt2, Scalar(255, 0, 0), line_width);
+			pt1 = Point(*(linedata[1] + i * 7), *(linedata[1] + i * 7 + 1));
+			pt2 = Point(*(linedata[1] + i * 7 + 2), *(linedata[1] + i * 7 + 3));
+			line_width[1] = *(linedata[1] + i * 7 + 4);
+			line(matGlobal8, pt1, pt2, Scalar(0, 0, 255), 1);// line_width);
 		}
 	}
-	free(linedata);
-	linedata = 0;
+	//free(linedata[1]);
+	//linedata[1] = 0;
 
+	//matGlobal8.convertTo(matGlobal8, CV_8UC3);
 	*p_img[9] = IplImage(matGlobal8);
 	cv::imwrite("..\\matGlobal8.jpg", matGlobal8);
 	pDC = GetDlgItem(IDC_RESULT7)->GetDC();
@@ -880,7 +897,7 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 			pt1 = Point(*(linedata + i * 7), *(linedata + i * 7 + 1));
 			pt2 = Point(*(linedata + i * 7 + 2), *(linedata + i * 7 + 3));
 			line_width = *(linedata + i * 7 + 4);
-			line(matGlobal7, pt1, pt2, Scalar(255, 255, 255), line_width);
+			line(matGlobal7, pt1, pt2, Scalar(255, 255, 255), 1);// line_width);
 		}
 	}
 	free(linedata);

@@ -177,9 +177,9 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_H_low2.Format("%d", 7);
 	m_edit_H_high2.Format("%d", 12);
 	m_edit_filter_order.Format("%d", 3);
-	m_edit_filter_times.Format("%d", 7);
+	m_edit_filter_times.Format("%d", 1);
 	m_edit_filter_order2.Format("%d", 3);
-	m_edit_filter_times2.Format("%d", 7);
+	m_edit_filter_times2.Format("%d", 1);
 	m_edit_filter_order3.Format("%d", 3);
 	m_edit_filter_times3.Format("%d", 0);
 	m_edit_caminput.Format("%d", 0);
@@ -800,7 +800,8 @@ void CopencvtestDlg::OnBnClickedButtonProc3()
 	//line(matGlobal7, pt1, pt2, Scalar(0, 255, 0), 1);
 	int cols = matGlobal7.cols;
 	int rows = matGlobal7.rows;
-	
+	if (linedata[0])
+		free(linedata[0]);
 	linedata[0] = lsd(&n_line_out[0], matGlobal7.ptr<double>(0), cols, rows);
 	//matGlobal7.convertTo(matGlobal7, CV_8UC3);
 	matGlobal7 = cv::Mat(p_img[5], 1);
@@ -816,7 +817,7 @@ void CopencvtestDlg::OnBnClickedButtonProc3()
 	}
 	//free(linedata[0]);
 	//linedata[0] = 0;
-	
+
 	*p_img[8] = IplImage(matGlobal7);
 	cv::imwrite("..\\matGlobal7.jpg", matGlobal7);
 	CDC* pDC = GetDlgItem(IDC_RESULT6)->GetDC();
@@ -839,6 +840,8 @@ void CopencvtestDlg::OnBnClickedButtonProc3()
 	rows = matGlobal8.rows;
 	//line_width = 0;
 	//n_line_out = 0;
+	if (linedata[1])
+		free(linedata[1]);
 	linedata[1] = lsd(&n_line_out[1], matGlobal8.ptr<double>(0), cols, rows);
 	matGlobal8 = cv::Mat(p_img[7], 1);
 	if (linedata[1])
@@ -874,43 +877,32 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 	Point pt1 = Point(0, 0);
 	Point pt2 = Point(110, 110);
 
-	if (p_imgs[1])//手动释放上一次的
-		cvReleaseImage(&p_imgs[1]);
-	p_imgs[1] = cvCreateImage(cvGetSize(p_img[1]), p_img[1]->depth, 1);//单通道
-	cvCvtColor(p_img[1], p_imgs[1], CV_BGR2GRAY);
-	Mat tmp(p_imgs[1], true);
-	tmp.convertTo(matGlobal6, CV_64FC1);
-	//tmp.convertTo(matGlobal7, CV_64FC1);
-	//matGlobal6 = cv::Mat(p_imgs[1], true);//初始化
-	matGlobal7 = cv::Mat(p_imgs[1], true);//初始化
-	//line(matGlobal6, pt1, pt2, Scalar(0, 255, 0), 1);
-
-	int cols = matGlobal6.cols;
-	int rows = matGlobal6.rows;
-	double *linedata = 0, line_width = 0;
-	int n_line_out = 0;
-	linedata = lsd(&n_line_out, matGlobal6.ptr<double>(0), cols, rows);
-	if (linedata)
+	for (int i = 0; i < n_line_out[0]; i++)
 	{
-		for (int i = 0; i < n_line_out; i++)
-		{
-			pt1 = Point(*(linedata + i * 7), *(linedata + i * 7 + 1));
-			pt2 = Point(*(linedata + i * 7 + 2), *(linedata + i * 7 + 3));
-			line_width = *(linedata + i * 7 + 4);
-			line(matGlobal7, pt1, pt2, Scalar(255, 255, 255), 1);// line_width);
-		}
+		pt1 = Point(*(linedata[0] + i * 7), *(linedata[0] + i * 7 + 1));
+		pt2 = Point(*(linedata[0] + i * 7 + 2), *(linedata[0] + i * 7 + 3));
+		line_width[0] = *(linedata[0] + i * 7 + 4);
+		line(matGlobal2, pt1, pt2, Scalar(0, 255, 0), 1);// line_width);
 	}
-	free(linedata);
-	linedata = 0;
+	for (int i = 0; i < n_line_out[1]; i++)
+	{
+		pt1 = Point(*(linedata[1] + i * 7), *(linedata[1] + i * 7 + 1));
+		pt2 = Point(*(linedata[1] + i * 7 + 2), *(linedata[1] + i * 7 + 3));
+		line_width[1] = *(linedata[1] + i * 7 + 4);
+		line(matGlobal2, pt1, pt2, Scalar(0, 0, 255), 1);// line_width);
+	}
 
-	*p_img[8] = IplImage(matGlobal7);
-	cv::imwrite("..\\matGlobal7.jpg", matGlobal7);
-	CDC* pDC = GetDlgItem(IDC_RESULT5)->GetDC();
+	//free(linedata[0]);
+	//linedata[0] = 0;
+
+	cv::imwrite("..\\matGlobal2.jpg", matGlobal2);
+	IplImage img = matGlobal2;	
+	CDC* pDC = GetDlgItem(IDC_RESULT)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CvvImage cimg;
-	cimg.CopyOf(p_img[8]);
+	cimg.CopyOf(&img);
 	CRect rect;
-	GetDlgItem(IDC_RESULT5)->GetClientRect(&rect);
+	GetDlgItem(IDC_RESULT)->GetClientRect(&rect);
 	cimg.DrawToHDC(hDC, &rect);
 	ReleaseDC(pDC);
 }

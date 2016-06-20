@@ -698,7 +698,6 @@ void CopencvtestDlg::OnBnClickedButtonFilter()
 	GetDlgItem(IDC_RESULT5)->GetClientRect(&rect);
 	cimg.DrawToHDC(hDC, &rect);
 	ReleaseDC(pDC);
-
 }
 
 

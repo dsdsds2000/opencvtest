@@ -90,4 +90,11 @@ public:
 	afx_msg void OnStnDblclickResult7();
 	CString m_edit_filter_order3;
 	CString m_edit_filter_times3;
+	CString m_edit_point_x;
+	CString m_edit_point_y;
+	CString m_edit_point_H;
+	CString m_edit_point_S;
+	CString m_edit_point_V;
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

@@ -78,6 +78,11 @@ CopencvtestDlg::CopencvtestDlg(CWnd* pParent /*=NULL*/)
 	, m_edit_filter_times2(_T(""))
 	, m_edit_filter_order3(_T(""))
 	, m_edit_filter_times3(_T(""))
+	, m_edit_point_x(_T(""))
+	, m_edit_point_y(_T(""))
+	, m_edit_point_H(_T(""))
+	, m_edit_point_S(_T(""))
+	, m_edit_point_V(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -105,6 +110,11 @@ void CopencvtestDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES2, m_edit_filter_times2);
 	DDX_Text(pDX, IDC_EDIT_FILTER_ORDER3, m_edit_filter_order3);
 	DDX_Text(pDX, IDC_EDIT_FILTER_TIMES3, m_edit_filter_times3);
+	DDX_Text(pDX, IDC_EDIT_POINT_X, m_edit_point_x);
+	DDX_Text(pDX, IDC_EDIT_POINT_Y, m_edit_point_y);
+	DDX_Text(pDX, IDC_EDIT_POINT_H, m_edit_point_H);
+	DDX_Text(pDX, IDC_EDIT_POINT_S, m_edit_point_S);
+	DDX_Text(pDX, IDC_EDIT_POINT_V, m_edit_point_V);
 }
 
 BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
@@ -129,6 +139,7 @@ BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
 	ON_WM_TIMER()
 	ON_STN_DBLCLK(IDC_RESULT6, &CopencvtestDlg::OnStnDblclickResult6)
 	ON_STN_DBLCLK(IDC_RESULT7, &CopencvtestDlg::OnStnDblclickResult7)
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 
@@ -895,7 +906,7 @@ void CopencvtestDlg::OnBnClickedButtonProc4()
 	//linedata[0] = 0;
 
 	cv::imwrite("..\\matGlobal2.jpg", matGlobal2);
-	IplImage img = matGlobal2;	
+	IplImage img = matGlobal2;
 	CDC* pDC = GetDlgItem(IDC_RESULT)->GetDC();
 	HDC hDC = pDC->GetSafeHdc();
 	CvvImage cimg;
@@ -997,4 +1008,34 @@ void CopencvtestDlg::OnStnDblclickResult7()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	ShellExecute(NULL, "open", "..\\matGlobal8.jpg", NULL, NULL, SW_SHOWNORMAL);
+}
+
+
+void CopencvtestDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CRect rectPIC;
+	GetDlgItem(IDC_RENDER)->GetWindowRect(rectPIC);
+	int PicWidth = rectPIC.Width();
+	int PicHeight = rectPIC.Height();
+
+	m_edit_point_x.Format("%.0f", (point.x - rectPIC.left) / (double)PicWidth * matGlobal1.cols);
+	m_edit_point_y.Format("%.0f", (point.y - rectPIC.top) / (double)PicHeight * matGlobal1.rows);
+	UpdateData(0);
+
+
+
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+
+BOOL CopencvtestDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+	if (pMsg->message == WM_MOUSEMOVE)
+	{
+		OnMouseMove(NULL, pMsg->pt);
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

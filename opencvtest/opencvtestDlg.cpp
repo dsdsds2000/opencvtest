@@ -364,13 +364,14 @@ void CopencvtestDlg::OnBnClickedButtonLoad()
 	GetDlgItem(IDC_RENDER)->GetClientRect(&rect);
 	cimg.DrawToHDC(hDC, &rect);
 	ReleaseDC(pDC);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		if (p_img[i])
 			cvReleaseImage(&p_img[i]);
 		p_img[i] = cvCloneImage(&img);//Éî¿½±´
 
 	}
+	cvCvtColor(p_img[0], p_img[10], CV_BGR2HSV);
 }
 
 
@@ -1021,9 +1022,17 @@ void CopencvtestDlg::OnMouseMove(UINT nFlags, CPoint point)
 
 	m_edit_point_x.Format("%.0f", (point.x - rectPIC.left) / (double)PicWidth * matGlobal1.cols);
 	m_edit_point_y.Format("%.0f", (point.y - rectPIC.top) / (double)PicHeight * matGlobal1.rows);
+
+	IplImage* img = p_img[10];
+	if (img && atoi(m_edit_point_x) >= 0 && atoi(m_edit_point_x) < img->width && atoi(m_edit_point_y) >= 0 && atoi(m_edit_point_y) < img->height)
+	{
+		uchar* ptr = (uchar*)(img->imageData + atoi(m_edit_point_y) * img->widthStep);
+		m_edit_point_H.Format("%u", ptr[3 * atoi(m_edit_point_x)]);//H
+		m_edit_point_S.Format("%u", ptr[3 * atoi(m_edit_point_x) + 1]);//S
+		m_edit_point_V.Format("%u", ptr[3 * atoi(m_edit_point_x) + 2]);//V
+	}
+
 	UpdateData(0);
-
-
 
 	CDialogEx::OnMouseMove(nFlags, point);
 }

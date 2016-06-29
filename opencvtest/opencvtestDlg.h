@@ -46,7 +46,7 @@ public:
 	cv::Mat matGlobal6;
 	cv::Mat matGlobal7;
 	cv::Mat matGlobal8;
-	IplImage *p_img[10];
+	IplImage *p_img[11];
 	IplImage *p_imgs[2];//单通道
 	double *linedata[2] = { 0 ,0 }, line_width[2] = { 0 ,0 };//直线结果
 	int n_line_out[2] = { 0 ,0 };

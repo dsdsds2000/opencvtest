@@ -97,4 +97,5 @@ public:
 	CString m_edit_point_V;
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedButtonProc5();
 };

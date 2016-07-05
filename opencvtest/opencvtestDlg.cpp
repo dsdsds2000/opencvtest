@@ -140,6 +140,7 @@ BEGIN_MESSAGE_MAP(CopencvtestDlg, CDialogEx)
 	ON_STN_DBLCLK(IDC_RESULT6, &CopencvtestDlg::OnStnDblclickResult6)
 	ON_STN_DBLCLK(IDC_RESULT7, &CopencvtestDlg::OnStnDblclickResult7)
 	ON_WM_MOUSEMOVE()
+	ON_BN_CLICKED(IDC_BUTTON_PROC5, &CopencvtestDlg::OnBnClickedButtonProc5)
 END_MESSAGE_MAP()
 
 
@@ -179,7 +180,7 @@ BOOL CopencvtestDlg::OnInitDialog()
 	m_edit_H_high.Format("%d", 0);
 	m_edit_S_low.Format("%d", 0);
 	m_edit_S_high.Format("%d", 0);
-	m_edit_V_low.Format("%d", 140);
+	m_edit_V_low.Format("%d", 230);
 	m_edit_V_high.Format("%d", 255);
 	m_edit_S_low2.Format("%d", 0);
 	m_edit_S_high2.Format("%d", 0);
@@ -932,6 +933,8 @@ void CopencvtestDlg::OnBnClickedButtonCapture()
 	if (!VideoCap.isOpened())
 	{
 		VideoCap.open(atoi(m_edit_caminput));
+		VideoCap.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+		VideoCap.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
 	}
 	if (!VideoCap.isOpened())
 	{
@@ -1015,6 +1018,8 @@ void CopencvtestDlg::OnStnDblclickResult7()
 void CopencvtestDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	UpdateData(1);
+
 	CRect rectPIC;
 	GetDlgItem(IDC_RENDER)->GetWindowRect(rectPIC);
 	int PicWidth = rectPIC.Width();
@@ -1047,4 +1052,53 @@ BOOL CopencvtestDlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CopencvtestDlg::OnBnClickedButtonProc5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	UpdateData(1);
+	IplImage* img = p_img[2];
+	vector<int> detectY;
+
+	for (int y = 0; y < img->height; y++)
+	{
+		uchar* ptr = (uchar*)(img->imageData + y * img->widthStep);
+		for (int x = 0; x < img->width; x++)
+		{
+			//ptr[3 * x] = 0;//H
+			//ptr[3 * x + 1] = 255;//S
+			//ptr[3 * x + 2] = 255;//V
+			if (ptr[3 * x + 2] > atoi(m_edit_V_low))
+			{
+				detectY.push_back(y);
+			}
+		}
+	}
+	sort(detectY.begin(), detectY.end());
+
+	Point pt1 = Point(0, 0);
+	Point pt2 = Point(110, 110);
+
+	pt1.y = detectY[0];
+	pt2.x = img->width;
+	pt2.y = detectY[0];
+	line(matGlobal3, pt1, pt2, Scalar(0, 255, 0), 1);
+
+	pt1.y = detectY.back();
+	pt2.x = img->width;
+	pt2.y = detectY.back();
+	line(matGlobal3, pt1, pt2, Scalar(0, 255, 0), 1);
+
+	cv::imwrite("..\\matGlobal3.jpg", matGlobal3);
+	IplImage img1 = matGlobal3;
+	CDC* pDC = GetDlgItem(IDC_RESULT3)->GetDC();
+	HDC hDC = pDC->GetSafeHdc();
+	CvvImage cimg;
+	cimg.CopyOf(&img1);
+	CRect rect;
+	GetDlgItem(IDC_RESULT3)->GetClientRect(&rect);
+	cimg.DrawToHDC(hDC, &rect);
+	ReleaseDC(pDC);
 }
